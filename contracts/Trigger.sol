@@ -33,7 +33,7 @@ contract Trigger is Ownable {
     address private tokenToBuy;
     address private tokenPaired;
 
-    bool private snipeLock;
+    bool private targetLock;
 
     constructor(address _wbnb) public {
         administrator = payable(msg.sender);
@@ -46,15 +46,15 @@ contract Trigger is Ownable {
 
     // Trigger is the smart contract in charge or performing liquidity sniping.
     // Its role is to hold the BNB, perform the swap once ax-50 detect the tx in the mempool and if all checks are passed; then route the tokens sniped to the owner.
-    // It requires a first call to configureSnipe in order to be armed. Then, it can snipe on whatever pair no matter the paired token (BUSD / WBNB etc..).
+    // It requires a first call to configreProcess in order to be armed. Then, it can snipe on whatever pair no matter the paired token (BUSD / WBNB etc..).
     // This contract uses a custtom router which is a copy of uniswapv2 router but with modified selectors, so that our tx are more difficult to listen than those directly going through the usual router.
     
     // perform the liquidity sniping
-    function snipeListing() external returns(bool success) {
-        require(IERC20(wbnb).balanceOf(address(this)) >= wbnbIn, "snipe: not enough wbnb on the contract");
+    function targetListing() external returns(bool success) {
+        require(IERC20(wbnb).balanceOf(address(this)) >= wbnbIn, "notice: not enough wbnb on the contract");
         IERC20(wbnb).approve(customRouter, wbnbIn);
-        require(snipeLock == false, "snipe: sniping is locked. See configure");
-        snipeLock = true;
+        require(targetLock == false, "notice: target is locked. See configure");
+        targetLock = true;
         
         address[] memory path;
         if (tokenPaired != wbnb) {
@@ -106,17 +106,17 @@ contract Trigger is Ownable {
     }
     
     // must be called before sniping
-    function configureSnipe(address _tokenPaired, uint _amountIn, address _tknToBuy, uint _amountOutMin) external onlyOwner returns(bool success) {
+    function configreProcess(address _tokenPaired, uint _amountIn, address _tknToBuy, uint _amountOutMin) external onlyOwner returns(bool success) {
         tokenPaired = _tokenPaired;
         wbnbIn = _amountIn;
         tokenToBuy = _tknToBuy;
         minTknOut = _amountOutMin;
-        snipeLock = false;
+        targetLock = false;
         return true;
     }
     
     function getSnipeConfiguration() external view onlyOwner returns(address, uint, address, uint, bool) {
-        return (tokenPaired, wbnbIn, tokenToBuy, minTknOut, snipeLock);
+        return (tokenPaired, wbnbIn, tokenToBuy, minTknOut, targetLock);
     }
     
     // here we precise amount param as certain bep20 tokens uses strange tax system preventing to send back whole balance

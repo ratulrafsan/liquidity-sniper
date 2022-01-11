@@ -53,7 +53,7 @@ await pancake.methods.addLiquidityETH('your token address', '5000000000000000000
 ### Trigger usage
 ```
 trigger = await Trigger.deployed()
-trigger.snipeListing()
+trigger.targetListing()
 
 await wbnb.methods.balanceOf(trigger.address).call()
 ```

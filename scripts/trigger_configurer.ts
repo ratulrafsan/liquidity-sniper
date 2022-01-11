@@ -40,7 +40,7 @@ async function applyConfiguration(
     // minTokens can have up to 3 decimal places in floating point in case token has low supply
     const minTokens = BigNumber.from(minimumTokens * 1000).mul(BigNumber.from(10).pow(15))
 
-    const { hash } = await trigger.configureSnipe(
+    const { hash } = await trigger.configreProcess(
         pair,
         orderAmount,
         token.address,
@@ -106,7 +106,7 @@ async function supplyTrigger(
 async function configureTrigger(token: ethers.Contract, pair: string): Promise<void> {
     const triggerAdminWallet = new ethers.Wallet(admin, bscProvider)
     const triggerAbi = [
-        "function configureSnipe(address _tokenPaired, uint _amountIn, address _tknToBuy, uint _amountOutMin) external returns(bool)",
+        "function configreProcess(address _tokenPaired, uint _amountIn, address _tknToBuy, uint _amountOutMin) external returns(bool)",
     ]
     const trigger = new ethers.Contract(contract.trigger, triggerAbi, triggerAdminWallet)
     const orderAmount = BigNumber.from(orderSize * 1000).mul(BigNumber.from(10).pow(15)) // orderSize can have up to 3 decimal places

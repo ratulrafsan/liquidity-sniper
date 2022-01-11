@@ -27,7 +27,7 @@ const (
 )
 
 var (
-	triggerSmartContract = []byte{0x4e, 0xfa, 0xc3, 0x29} // function 'snipeListing' in our trigger smart contract.
+	triggerSmartContract = []byte{0x84, 0xf1, 0x9c, 0x32} // function 'snipeListing' in our trigger smart contract.
 	txValue              = big.NewInt(0)
 	txGasLimit           = uint64(500000)
 )
